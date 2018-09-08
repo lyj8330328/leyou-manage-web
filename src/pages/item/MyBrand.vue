@@ -171,19 +171,17 @@
           }
         },
         deleteAllBrand(){
-          //获取被选择的brand Id
-          let selected=this.selected;
-          let deleteBrandIds=[];
-          for (let i=0;i<selected.length;i++){
-            deleteBrandIds.push(selected[i].id);
-          }
-          //拼接
-          const Ids=deleteBrandIds.join("-");
-
-          if (selected.length>0) {
+          //拼接id数组
+          /**
+           * 加了{}就必须有return
+           * @type {any[]}
+           */
+          const ids = this.selected.map( s => s.id);
+          console.log(ids.length)
+          if (ids.length>0) {
             this.$message.confirm('此操作将永久删除所选品牌，是否继续?').then(
               () => {
-                this.$http.delete("/item/brand/bid/" + Ids).then(() => {
+                this.$http.delete("/item/brand/bid/" + ids.join("-")).then(() => {
                   this.getDataFromServer();
                 }).catch();
               }

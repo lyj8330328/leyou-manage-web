@@ -17,7 +17,7 @@
               </v-breadcrumbs>
             </v-toolbar-title>
             <v-spacer/>
-            <v-btn icon @click="specifications=oldSpec; dialog = false">
+            <v-btn icon @click="close">
               <v-icon>clear</v-icon>
             </v-btn>
           </v-toolbar>
@@ -117,9 +117,7 @@
         oldSpec: [],// 修改前的规格参数信息
         dialog: false, // 是否弹出对话框，默认是false，隐藏对话框
         currentNode: {},// 当前被选中的商品分类节点
-        isInsert: false,// 新增或者修改
         units:config.unitOption// 数值类型的可选单位
-        // treeData:treeData // 假的商品分类数据
       }
     },
     methods: {
@@ -139,8 +137,6 @@
               this.oldSpec = resp.data;
               // 打开弹窗
               this.dialog = true;
-              // 标记此时要进行修改操作
-              this.isInsert = false;
             })
             .catch(() => {
               // 如果没有查询成功，那么询问是否添加规格
@@ -159,13 +155,14 @@
             })
         }
       },
+      //添加分组
       addGroup() {
         this.specifications.push({
           group: '',
           params: []
         })
       },
-      // 添加新模板
+      // 添加新属性
       addParam(i) {
         this.specifications[i].params.push({
           k: "",
@@ -176,28 +173,42 @@
           options: []
         })
       },
-      // 添加默认值
+      // 为属性添加默认值
       addOption(i, j) {
         this.specifications[i].params[j].options.push("")
       },
-      // 修改模板
+      // 保存、修改、删除模板
       saveTemplate() {
         this.dialog = true;
-        this.$http({
-          method: this.isInsert ? 'post' : 'put',
-          url: '/item/spec',
-          data: this.$qs.stringify({
-            categoryId: this.currentNode.id,
-            specifications: JSON.stringify(this.specifications)
-          })
-        })
-          .then(() => {
+
+        //模板删除
+        if (this.specifications.length === 0){
+          //console.log("删除:"+this.currentNode.id);
+          this.$http.delete("/item/spec/"+this.currentNode.id).then(() => {
             this.dialog = false;
-            this.$message.success("保存成功！")
-          })
-          .catch(() => {
-            this.$message.error("保存失败！")
+            this.$message.success("删除成功！");
+            this.oldSpec = [];
+          }).catch(() => {
+            this.$message.error("删除失败");
           });
+        }else {
+          this.$http({
+            method: this.oldSpec.length === 0 ? 'post' : 'put',
+            url: '/item/spec',
+            data: this.$qs.stringify({
+              categoryId: this.currentNode.id,
+              specifications: JSON.stringify(this.specifications)
+            })
+          })
+            .then(() => {
+              this.dialog = false;
+              this.$message.success("保存成功！")
+              this.oldSpec = [];
+            })
+            .catch(() => {
+              this.$message.error("保存失败！")
+            });
+        }
       },
       deleteGroup(i) {
         this.specifications.splice(i, 1)
@@ -209,6 +220,12 @@
       // 删除指定值
       deleteOption(i1, i2, i3) {
         this.specifications[i1].params[i2].options.splice(i3, 1);
+      },
+
+      //关闭对话框
+      close(){
+        this.oldSpec = [];
+        this.dialog = false;
       }
     }
   }

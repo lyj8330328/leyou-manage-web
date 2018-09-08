@@ -323,9 +323,17 @@
                     const {indexes, ...rest} = obj;
                     if (this.isEdit){
                       const skuList = this.goods.skusList;
+                      console.log(skuList);
                       for (let i = 0 ; i < skuList.length ; i++){
                           if (Object.is(JSON.stringify(rest),skuList[i].ownSpec)){
-                            Object.assign(obj, {price: skuList[i].price, stock: skuList[i].stock, enable:skuList[i].enable , images: skuList[i].images});
+
+                            let tempImage = [];
+                            if (skuList[i].images.search(',') !== -1){
+                              tempImage = skuList[i].images.split(',');
+                            }else {
+                              tempImage.push(skuList[i].images);
+                            }
+                            Object.assign(obj, {price: skuList[i].price, stock: skuList[i].stock, enable:skuList[i].enable , images: tempImage});
                             break;
                           }else {
                             //如果已经启用，回显源数据，否则，正常构造
@@ -346,7 +354,7 @@
             }, [{}]);
         },
         headers(){
-          console.log(this.skus)
+          //console.log(this.skus);
           if(this.skus.length <= 0){
             return [];
           }
@@ -423,6 +431,7 @@
            * 将用户选择的相关信息显示到对应区域
            * @type {Array}
            */
+          //console.log(temp);
           const editSpecialTemplate = [];
             temp.forEach(({params}) => {
               params.forEach(({k, v,options,global}) => {
@@ -532,10 +541,10 @@
           Object.assign(goodsParams,{
             cid1,cid2,cid3, //商品分类
             skus,
-          })
+          });
           goodsParams.spuDetail.specifications = JSON.stringify(specs);
           goodsParams.spuDetail.specTemplate = JSON.stringify(specTemplate);
-          console.log(goodsParams)
+          //console.log(goodsParams)
 
 
 

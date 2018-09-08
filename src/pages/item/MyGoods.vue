@@ -102,11 +102,11 @@
             goodsList: [], //当前页品牌数据
             loading: true, //是否在加载中
             headers: [// 表头
-              {text: 'id', align: 'center', value: 'id'},
+              {text: 'id', align: 'center', value: 'id',sortable: true},
               {text: '标题', align: 'center', sortable: false, value: 'name'},
-              {text: '商品分类', align: 'center', sortable: false, value: 'image'},
-              {text: '品牌', align: 'center', value: 'letter', sortable: true,},
-              {text: '操作', align: 'center', value: 'id', sortable: false}
+              {text: '商品分类', align: 'center', sortable: false, value: 'category'},
+              {text: '品牌', align: 'center', value: 'brand', sortable: false,},
+              {text: '操作', align: 'center', sortable: false}
             ],
             show: false, //控制对话框的显示
             oldGoods : {}, //即将编辑的商品信息
@@ -255,7 +255,6 @@
 
           this.$http.get("/item/goods/spu/"+oldGoods.id).then(({data}) => {
             this.isEdit = true;
-            console.log(data);
             this.oldGoods.skusList = data.skus;
             this.oldGoods.spuDetail = data.spuDetail;
             this.oldGoods.spuDetail.specialSpecs = JSON.parse(data.spuDetail.specTemplate);

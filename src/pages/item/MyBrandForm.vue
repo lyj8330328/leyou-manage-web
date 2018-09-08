@@ -71,6 +71,7 @@
                  */
                 const {categories, ... rest}=this.brand;
                 rest.categories=categories.map(c => c.id).join(",");
+                console.log(rest)
                 if(this.isEdit) {
                   this.$http.delete("/item/brand/cid_bid/" + this.oldBrand.id).then().catch();
                 }
@@ -79,7 +80,7 @@
                   url:"/item/brand",
                   data:this.$qs.stringify(rest),
                 }).then(
-                  resp =>{
+                  () =>{
                     //关闭对话框
                     this.$emit('reload');
                     this.$message.success("保存成功！");
