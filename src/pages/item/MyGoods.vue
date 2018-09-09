@@ -73,7 +73,7 @@
         </v-toolbar>
         <!--对话框的内容，表单-->
         <v-card-text class="px-5" style="height: 600px">
-          <my-goods-form @initStep="initStep" @close="close" :oldGoods="oldGoods" :step="step" :show="show"  ref="goodsForm"/>
+          <my-goods-form @initStep="initStep" @close="close" :isEdit="isEdit" :oldGoods="oldGoods" :step="step" :show="show"  ref="goodsForm"/>
         </v-card-text>
         <v-card-actions>
           <v-layout row justify-center>

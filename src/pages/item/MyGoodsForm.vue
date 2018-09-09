@@ -215,7 +215,7 @@
           count:0, //文本框的数量
           loading3:false,
           loader: null,
-          isEdit:false,
+          //isEdit:false,
           oldData:[],
           allSpecs:[]
         }
@@ -229,6 +229,10 @@
           default: 1
         },
         show:{
+          type:Boolean,
+          default: false
+        },
+        isEdit:{
           type:Boolean,
           default: false
         }
@@ -269,8 +273,9 @@
           deep: true,
           handler(val){
             if (val !== null && val.spuDetail !== null){
+              console.log("回显数据")
               this.goods = Object.deepCopy(val);
-              this.isEdit = true;
+              //this.isEdit = true;
               this.oldData = val.spuDetail.specifications;
             }else {
               this.clear();
@@ -322,6 +327,7 @@
                     //如果发现是最后一组，则添加价格、库存等字段
                     const {indexes, ...rest} = obj;
                     if (this.isEdit){
+                      console.log("回显")
                       const skuList = this.goods.skusList;
                       console.log(skuList);
                       for (let i = 0 ; i < skuList.length ; i++){
@@ -342,6 +348,7 @@
                         }
                     }
                     else {
+                      console.log("正常")
                       Object.assign(obj, {price: 0, stock: 0, enable: false, images: []});
                     }
                     //去掉索引字符串开头的下划线
@@ -547,7 +554,6 @@
           //console.log(goodsParams)
 
 
-
           this.$http({
             url:"/item/goods",
             method: this.isEdit ? 'put':'post',
@@ -565,6 +571,7 @@
         },
         clear(){
           //清空表单
+          //this.oldGoods = {};
           this.goods.categories = [];
           this.goods.brandId = 0;
           this.goods.title = '';
