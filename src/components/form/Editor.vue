@@ -3,7 +3,8 @@
     <quilleditor v-model="content"
                  ref="myTextEditor"
                  :options="editorOption"
-                 @change="onChange">
+                 @change="onChange"
+                 >
       <div id="toolbar" slot="toolbar">
         <select class="ql-size">
           <option value="small"></option>
@@ -93,7 +94,8 @@
         this.$http.post(this.uploadUrl, data)
           .then(res => {
             if (res.data) {
-              this.editor.insertEmbed(self.editor.getSelection().index, 'image', res.data)
+              console.log(res.data);
+              this.editor.insertEmbed(this.editor.getSelection().index, 'image', res.data)
             }
           })
       },

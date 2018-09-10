@@ -57,7 +57,8 @@
       </v-stepper-content>
 
       <v-stepper-content step="2" style="height: 480px">
-        <quill-editor style="height: 430px" v-model="goods.spuDetail.description" :options="editorOption"/>
+        <!--<quill-editor style="height: 430px" v-model="goods.spuDetail.description" :options="editorOption"/>-->
+        <v-editor  v-model="goods.spuDetail.description" upload-url="/upload/image" fileName="file"/>
         <v-divider></v-divider>
       </v-stepper-content>
 
@@ -254,6 +255,7 @@
                 this.allSpecs = data;
                 //console.log(this.allSpecs)
                 this.dataProces(data);
+
                 if (this.isEdit) {
                   this.editDataProces(this.oldData);
                 }
@@ -275,7 +277,7 @@
             if (val !== null && val.spuDetail !== null){
               console.log("回显数据")
               this.goods = Object.deepCopy(val);
-              //this.isEdit = true;
+              this.isEdit = true;
               this.oldData = val.spuDetail.specifications;
             }else {
               this.clear();
