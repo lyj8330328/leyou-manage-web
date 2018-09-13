@@ -97,9 +97,11 @@
             <h4>{{spec.k}}</h4>
           </v-card-title>
           <v-card-text v-if="spec.options.length <= 0" class="px-5">
+            <!--当可选属性options的长度为0时，进行渲染，说明此时是对特有属性的渲染-->
             <div v-for="i in count+1" :key="i">
               <v-layout row>
                 <v-text-field :label="'输入新的'+spec.k" v-model="spec.selected[i-1]"></v-text-field>
+                <!--当数组的长度为0时，说明是第一次渲染，所以此时禁用删除按钮；当长度为1时，说明不是第一次渲染，可能是增加完进行删除后的结果，所以此时也要禁用删除按钮-->
                 <v-btn :disabled="spec.selected.length === 1 || spec.selected.length === 0" flat icon color="error" @click="spec.selected.splice(i-1,1),count=spec.selected.length-1">
                   <v-icon>delete</v-icon>
                 </v-btn>
@@ -118,6 +120,7 @@
           <v-card-title class="subheading"><h4>SKU列表</h4></v-card-title>
           <v-card-text v-if="skusLength > 0">
             <v-data-table :items="skus" :headers="headers" hide-actions item-key="indexes" class="elevation-4">
+              <!--数据列表-->
               <template slot="items" slot-scope="props">
                 <tr @click="props.expanded = !props.expanded">
                   <td class="text-xs-center" v-for="(v,k) in props.item" :key="k"
@@ -207,7 +210,6 @@
               description: '', //商品描述
               specTemplate: '',// sku属性模板的字符串格式
               specifications:[],
-              //specialSpecs:[]
             }
           },
           brandOptions:[], //品牌列表
@@ -250,12 +252,11 @@
               }).catch();
               //根据分类查询规格参数模板
               this.$http.get("/item/spec/" + this.goods.categories[2].id).then(({data}) => {
-                //保存全部规格
-                //过滤出SKU属性，同时将SPU中的特有属性置空
+                //保存全部规格，新增商品时使用
                 this.allSpecs = data;
-                //console.log(this.allSpecs)
                 this.dataProces(data);
-
+                //过滤出SKU属性，同时将SPU中的特有属性置空
+                //如果是新增，那么调用dataProces对数据进行处理，否则调用editDtaProces对数据进行处理。
                 if (this.isEdit) {
                   this.editDataProces(this.oldData);
                 }
@@ -264,8 +265,8 @@
           }
         },
         loader () {
-          const l = this.loader
-          this[l] = !this[l]
+          const l = this.loader;
+          this[l] = !this[l];
 
           setTimeout(() => (this[l] = false), 2000)
 
@@ -275,7 +276,6 @@
           deep: true,
           handler(val){
             if (val !== null && val.spuDetail !== null){
-              console.log("回显数据")
               this.goods = Object.deepCopy(val);
               this.isEdit = true;
               this.oldData = val.spuDetail.specifications;
@@ -305,14 +305,15 @@
         skus(){
             //1.过滤掉用户没有填写数据的规格参数
             const arr = this.specialSpecs.filter(s => s.selected.length > 0);
+            console.log(arr);
           /**
            * 如果是进行修改时，需要根据options的长度来判断文本框的个数
            */
-          for (let i = 0;i < arr.length;i++){
+           for (let i = 0;i < arr.length;i++){
               if (arr[i].options.length === 0){
                 this.count = arr[i].selected.length-1;
               }
-            }
+           }
             //2.通过reduce进行累加笛卡儿积
             //3.数据优化：价格、库存、是否启用、商品的图片、分类组合索引
             return arr.reduce((last, spec, index) => {
@@ -329,9 +330,7 @@
                     //如果发现是最后一组，则添加价格、库存等字段
                     const {indexes, ...rest} = obj;
                     if (this.isEdit){
-                      console.log("回显")
                       const skuList = this.goods.skusList;
-                      console.log(skuList);
                       for (let i = 0 ; i < skuList.length ; i++){
                           if (Object.is(JSON.stringify(rest),skuList[i].ownSpec)){
 
@@ -350,7 +349,6 @@
                         }
                     }
                     else {
-                      console.log("正常")
                       Object.assign(obj, {price: 0, stock: 0, enable: false, images: []});
                     }
                     //去掉索引字符串开头的下划线
@@ -389,8 +387,6 @@
           return headers;
         },
         skusLength(){
-          // console.log("内容"+Object.values(this.skus[0]))
-          // console.log("长度"+Object.values(this.skus[0]).length)
           if (Object.values(this.skus[0]).length > this.specialSpecs.length+4)
             return this.skus.length;
           else return 0;
