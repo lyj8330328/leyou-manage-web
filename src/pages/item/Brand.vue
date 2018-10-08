@@ -133,7 +133,6 @@
           .then(resp => {
             this.brand.categories = resp.data;
           })
-
       },
       deleteBrand(item) {
         this.$message.confirm('此操作将永久删除该品牌, 是否继续?').then(() => {
@@ -147,14 +146,13 @@
         }).catch(() => {
           this.$message.info("删除已取消！");
         });
-
       },
       getDataFromApi() {
         this.loading = true;
         // 200ms后返回假数据
         window.setTimeout(() => {
           this.items = brandData.slice(0,4);
-          this.totalItems = 100
+          this.totalItems = 100;
           this.loading = false;
         }, 200)
       }

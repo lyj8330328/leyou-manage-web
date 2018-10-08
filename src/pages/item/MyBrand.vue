@@ -97,7 +97,7 @@
         search:{
           deep:true,
           handler() {
-            console.log(this.search)
+            //console.log(this.search)
             this.getDataFromServer();
           }
         }
@@ -123,7 +123,7 @@
               key:this.search,
             }
           }).then(resp =>{
-            console.log(resp)
+            //console.log(resp)
             this.brands=resp.data.items;
             this.totalBrands = resp.data.total;
             //关闭进度条
@@ -177,7 +177,7 @@
            * @type {any[]}
            */
           const ids = this.selected.map( s => s.id);
-          console.log(ids.length)
+          //console.log(ids.length);
           if (ids.length>0) {
             this.$message.confirm('此操作将永久删除所选品牌，是否继续?').then(
               () => {

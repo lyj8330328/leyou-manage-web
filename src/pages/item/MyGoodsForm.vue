@@ -56,7 +56,7 @@
         </v-form>
       </v-stepper-content>
 
-      <v-stepper-content step="2" style="height: 480px">
+      <v-stepper-content step="2" >
         <!--<quill-editor style="height: 430px" v-model="goods.spuDetail.description" :options="editorOption"/>-->
         <v-editor  v-model="goods.spuDetail.description" upload-url="/upload/image" fileName="file"/>
         <v-divider></v-divider>
@@ -128,7 +128,7 @@
                   >{{v}}
                   </td>
                   <td   class="text-xs-center">
-                    <v-text-field single-line label="0" v-model="props.item.price"
+                    <v-text-field single-line label="d" v-model="props.item.price"
                                   :rules="[val => /^([1-9]\d*)\.?(\d{0,2})$/.test(val) || '价格格式错误']"/>
                   </td>
                   <td  class="text-xs-center">
@@ -305,7 +305,7 @@
         skus(){
             //1.过滤掉用户没有填写数据的规格参数
             const arr = this.specialSpecs.filter(s => s.selected.length > 0);
-            console.log(arr);
+            //console.log(arr);
           /**
            * 如果是进行修改时，需要根据options的长度来判断文本框的个数
            */
@@ -340,7 +340,7 @@
                             }else {
                               tempImage.push(skuList[i].images);
                             }
-                            Object.assign(obj, {price: skuList[i].price, stock: skuList[i].stock, enable:skuList[i].enable , images: tempImage});
+                            Object.assign(obj, {price: this.$format(skuList[i].price), stock: skuList[i].stock, enable:skuList[i].enable , images: tempImage});
                             break;
                           }else {
                             //如果已经启用，回显源数据，否则，正常构造
@@ -361,7 +361,6 @@
             }, [{}]);
         },
         headers(){
-          //console.log(this.skus);
           if(this.skus.length <= 0){
             return [];
           }
@@ -533,12 +532,14 @@
             specTemplate[k] = selected;
           });
           //4.处理sku
+          // console.log("修改");
+          // console.log(this.skus);
           const skus = this.skus.filter(s => s.enable).map(({price,stock,enable,images,indexes, ...rest}) => {
             //标题，在spu的title基础上，拼接特有规格属性值(内存、机身存储、机身颜色)
             const title = goodsParams.title+" "+Object.values(rest).join(" ");
             return {
               price: this.$format(price+""),enable,indexes,title, //基本属性
-              stock: this.$format(stock+""),
+              stock: stock,
               images: images && images.length > 0 ? images.join(",") : "", //图片
               ownSpec:JSON.stringify(rest),  //特有规格参数
             }
@@ -549,7 +550,7 @@
           });
           goodsParams.spuDetail.specifications = JSON.stringify(specs);
           goodsParams.spuDetail.specTemplate = JSON.stringify(specTemplate);
-          //console.log(goodsParams)
+          console.log(goodsParams);
 
 
           this.$http({
