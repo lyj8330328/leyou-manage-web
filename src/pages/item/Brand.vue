@@ -115,10 +115,18 @@
         }
       }
     },
+    created(){
+      this.loadData();
+    },
     mounted() {
       this.getDataFromApi();
     },
     methods: {
+
+      loadData(){
+        console.log(123);
+      },
+
       addBrand() {
         this.brand = {};
         this.isEdit = false;

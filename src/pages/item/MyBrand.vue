@@ -104,8 +104,12 @@
       },
       created(){
         this.getDataFromServer();
+        this.loadData();
       },
       methods:{
+        loadData(){
+          console.log(123);
+        },
         getDataFromServer(){
 
           // 开启进度条

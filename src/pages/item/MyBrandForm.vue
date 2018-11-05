@@ -71,7 +71,7 @@
                  */
                 const {categories, ... rest}=this.brand;
                 rest.categories=categories.map(c => c.id).join(",");
-                console.log(rest)
+                //console.log(rest)
                 if(this.isEdit) {
                   this.$http.delete("/item/brand/cid_bid/" + this.oldBrand.id).then().catch();
                 }
