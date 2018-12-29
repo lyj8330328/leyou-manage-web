@@ -116,7 +116,11 @@
       }
     },
     created(){
-      this.loadData();
+      this.$http.get("/auth/verify").then(() => {
+        this.loadData();
+      }).catch(() => {
+        this.$router.push("/login");
+      });
     },
     mounted() {
       this.getDataFromApi();

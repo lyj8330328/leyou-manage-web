@@ -22,6 +22,13 @@
         leafNode:[],
       }
     },
+    created(){
+      this.$http.get("/auth/verify").then(() => {
+        console.log("已经登录");
+      }).catch(() => {
+        this.$router.push("/login");
+      });
+    },
     methods: {
       handleAdd(node) {
         console.log(node);

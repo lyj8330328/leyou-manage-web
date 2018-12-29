@@ -120,6 +120,13 @@
         units:config.unitOption// 数值类型的可选单位
       }
     },
+    created(){
+      this.$http.get("/auth/verify").then(() => {
+
+      }).catch(() => {
+        this.$router.push("/login");
+      });
+    },
     methods: {
       // 分类点击后的弹窗
       handleClick(node) {

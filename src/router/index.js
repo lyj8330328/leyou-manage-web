@@ -20,8 +20,9 @@ export default new Router({
     {
       path:"/",
       component: () => import('../pages/Layout'),  //异步加载
-      redirect:"/index/dashboard",
+      redirect:"/login",
       children:[
+        route("/login","/Login","Login"),
         route("/index/dashboard","/Dashboard","Dashboard"),
         route("/item/category",'/item/Category',"Category"),
         route("/item/brand",'/item/Brand',"Brand"),

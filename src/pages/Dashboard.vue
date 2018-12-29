@@ -33,6 +33,13 @@
 
       }
     },
+    created(){
+      this.$http.get("/auth/verify").then(() => {
+          console.log("已经登录");
+      }).catch(() => {
+        this.$router.push("/login");
+      });
+    },
     mounted(){
       this.$nextTick(() => {
         var sale = echarts.init(this.$refs.sale);

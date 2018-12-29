@@ -41,22 +41,45 @@
 </template>
 
 <script>
-export default {
-  data: () => ({
-    username: "",
-    password: "",
-    dialog: false,
-    e1:false
-  }),
-  methods: {
-    doLogin() {
-      if (!this.username || !this.password) {
-        this.dialog = true;
-        return false;
+  export default {
+    data(){
+      return{
+        username: '',
+        password: '',
+        dialog: false,
+        e1:false,
+        backPath:''
       }
-      console.log(this.username + " ... " + this.password);
-      this.$router.push("/");
+    },
+    beforeRouteEnter(to,from,next){
+
+      next(vm => {
+        vm._data.backPath = from.path;
+      });
+    },
+    methods: {
+      doLogin() {
+        if (!this.username || !this.password) {
+          this.dialog = true;
+          return false;
+        }
+        const form ={};
+        form.username = this.username;
+        form.password = this.password;
+
+        this.$http.post("/auth/accredit", this.$qs.stringify(form)).then(resp =>{
+          if (resp.status === 200){
+             //页面跳转
+
+            if (this.backPath === "/"){
+              this.$router.push("/index/dashboard");
+            } else {
+              this.$router.push(this.backPath);
+            }
+
+          }
+        }).catch();
+      }
     }
-  }
-};
+  };
 </script>

@@ -137,7 +137,11 @@
         }
       },
       created(){
-        this.getDataFromServer();
+        this.$http.get("/auth/verify").then(() => {
+          this.getDataFromServer();
+        }).catch(() => {
+          this.$router.push("/login");
+        });
       },
       methods:{
         close(){

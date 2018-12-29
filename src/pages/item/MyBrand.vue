@@ -103,8 +103,12 @@
         }
       },
       created(){
-        this.getDataFromServer();
-        this.loadData();
+        this.$http.get("/auth/verify").then(() => {
+          this.getDataFromServer();
+          this.loadData();
+        }).catch(() => {
+          this.$router.push("/login");
+        });
       },
       methods:{
         loadData(){

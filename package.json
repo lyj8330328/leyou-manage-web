@@ -15,6 +15,7 @@
     "element-ui": "^2.3.2",
     "iview": "^2.11.0",
     "qs": "^6.5.1",
+    "query-string": "^6.2.0",
     "vue": "^2.5.2",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.1",
