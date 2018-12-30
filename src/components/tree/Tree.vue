@@ -45,7 +45,12 @@
         this.db = this.treeData;
         return;
       }
-      this.getData();
+
+      this.verify().then(() => {
+        this.getData();
+      }).catch(() => {
+        this.$router.push("/login");
+      });
     },
     methods: {
       getData() {

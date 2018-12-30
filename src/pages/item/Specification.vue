@@ -120,13 +120,6 @@
         units:config.unitOption// 数值类型的可选单位
       }
     },
-    created(){
-      this.$http.get("/auth/verify").then(() => {
-
-      }).catch(() => {
-        this.$router.push("/login");
-      });
-    },
     methods: {
       // 分类点击后的弹窗
       handleClick(node) {
@@ -137,7 +130,6 @@
           // 如果是叶子节点，那么就发起ajax请求，去后台查询商品规格数据。
           this.$http.get("/item/spec/" + node.id)
             .then(resp => {
-              console.log(resp.data)
               // 查询成功后，把响应结果赋值给specifications属性，Vue会进行自动渲染。
               this.specifications = resp.data;
               // 记录下此时的规格数据，当页面撤销修改时，用来恢复原始数据
@@ -191,30 +183,36 @@
         //模板删除
         if (this.specifications.length === 0){
           //console.log("删除:"+this.currentNode.id);
-          this.$http.delete("/item/spec/"+this.currentNode.id).then(() => {
-            this.dialog = false;
-            this.$message.success("删除成功！");
-            this.oldSpec = [];
+          this.verify().then(() => {
+            this.$http.delete("/item/spec/"+this.currentNode.id).then(() => {
+              this.dialog = false;
+              this.$message.success("删除成功！");
+              this.oldSpec = [];
+            }).catch(() => {
+              this.$message.error("删除失败");
+            });
           }).catch(() => {
-            this.$message.error("删除失败");
+            this.$router.push("/login");
           });
         }else {
-          this.$http({
-            method: this.oldSpec.length === 0 ? 'post' : 'put',
-            url: '/item/spec',
-            data: this.$qs.stringify({
-              categoryId: this.currentNode.id,
-              specifications: JSON.stringify(this.specifications)
-            })
-          })
-            .then(() => {
+          this.verify().then(() => {
+            this.$http({
+              method: this.oldSpec.length === 0 ? 'post' : 'put',
+              url: '/item/spec',
+              data: this.$qs.stringify({
+                categoryId: this.currentNode.id,
+                specifications: JSON.stringify(this.specifications)
+              })
+            }).then(() => {
               this.dialog = false;
-              this.$message.success("保存成功！")
+              this.$message.success("保存成功！");
               this.oldSpec = [];
-            })
-            .catch(() => {
+            }).catch(() => {
               this.$message.error("保存失败！")
             });
+          }).catch(() => {
+            this.$router.push("/login");
+          });
         }
       },
       deleteGroup(i) {

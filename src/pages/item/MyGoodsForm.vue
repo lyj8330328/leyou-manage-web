@@ -550,22 +550,24 @@
           });
           goodsParams.spuDetail.specifications = JSON.stringify(specs);
           goodsParams.spuDetail.specTemplate = JSON.stringify(specTemplate);
-          console.log(goodsParams);
 
-
-          this.$http({
-            url:"/item/goods",
-            method: this.isEdit ? 'put':'post',
-            data:goodsParams
-          }).then(() => {
+          this.verify().then(() => {
+            this.$http({
+              url:"/item/goods",
+              method: this.isEdit ? 'put':'post',
+              data:goodsParams
+            }).then(() => {
               //成功，关闭窗口
               setTimeout(() =>{
                 this.$emit('close');
                 this.$message.success("保存成功！");
                 this.clear();
               },2000);
+            }).catch(() => {
+              this.$message.error("保存失败！");
+            });
           }).catch(() => {
-            this.$message.error("保存失败！");
+            this.$router.push("/login");
           });
         },
         clear(){

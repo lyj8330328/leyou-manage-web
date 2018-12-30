@@ -103,17 +103,13 @@
         }
       },
       created(){
-        this.$http.get("/auth/verify").then(() => {
+        this.verify().then(() => {
           this.getDataFromServer();
-          this.loadData();
         }).catch(() => {
           this.$router.push("/login");
         });
       },
       methods:{
-        loadData(){
-          console.log(123);
-        },
         getDataFromServer(){
 
           // 开启进度条
@@ -146,35 +142,47 @@
           this.getDataFromServer();
         },
         addBrand(){
-          this.isEdit=false;
-          this.show=true;
-          this.oldBrand = null;
+          this.verify().then(() => {
+            this.isEdit=false;
+            this.show=true;
+            this.oldBrand = null;
+          }).catch(() => {
+            this.$router.push("/login");
+          });
         },
         editBrand(oldBrand){
           //根据品牌信息查询商品分类
-          this.$http.get("/item/category/bid/"+oldBrand.id).then(
-            ({data}) => {
-              this.isEdit=true;
-              //显示弹窗
-              this.show=true;
-              //获取要编辑的brand
-              this.oldBrand=oldBrand;
-              this.oldBrand.categories = data;
-            }
-          ).catch();
+          this.verify().then(() => {
+            this.$http.get("/item/category/bid/"+oldBrand.id).then(
+              ({data}) => {
+                this.isEdit=true;
+                //显示弹窗
+                this.show=true;
+                //获取要编辑的brand
+                this.oldBrand=oldBrand;
+                this.oldBrand.categories = data;
+              }
+            ).catch();
+          }).catch(() => {
+            this.$router.push("/login");
+          });
 
         },
         deleteBrand(oldBrand){
           if (this.selected.length === 1 && this.selected[0].id === oldBrand.id) {
-            this.$message.confirm('此操作将永久删除该品牌, 是否继续?').then(
-              () => {
-                //发起删除请求，删除单条数据
+            this.verify().then(() => {
+              this.$message.confirm('此操作将永久删除该品牌, 是否继续?').then(
+                () => {
+                  //发起删除请求，删除单条数据
                   this.$http.delete("/item/brand/bid/" + oldBrand.id).then(() => {
                     this.getDataFromServer();
                   }).catch()
-              }
-            ).catch(() => {
-              this.$message.info("删除已取消！");
+                }
+              ).catch(() => {
+                this.$message.info("删除已取消！");
+              });
+            }).catch(() => {
+              this.$router.push("/login");
             });
           }
         },
@@ -186,15 +194,19 @@
            */
           const ids = this.selected.map( s => s.id);
           //console.log(ids.length);
-          if (ids.length>0) {
-            this.$message.confirm('此操作将永久删除所选品牌，是否继续?').then(
-              () => {
-                this.$http.delete("/item/brand/bid/" + ids.join("-")).then(() => {
-                  this.getDataFromServer();
-                }).catch();
-              }
-            ).catch(() => {
-              this.$message.info("删除已取消！");
+          if (ids.length > 0) {
+            this.verify().then(() => {
+              this.$message.confirm('此操作将永久删除所选品牌，是否继续?').then(
+                () => {
+                  this.$http.delete("/item/brand/bid/" + ids.join("-")).then(() => {
+                    this.getDataFromServer();
+                  }).catch();
+                }
+              ).catch(() => {
+                this.$message.info("删除已取消！");
+              });
+            }).catch(() => {
+              this.$router.push("/login");
             });
           }
         }

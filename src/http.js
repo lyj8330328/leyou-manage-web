@@ -8,3 +8,4 @@ axios.defaults.withCredentials = true;
 
 
 Vue.prototype.$http = axios;
+

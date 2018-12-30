@@ -22,25 +22,20 @@
         leafNode:[],
       }
     },
-    created(){
-      this.$http.get("/auth/verify").then(() => {
-        console.log("已经登录");
-      }).catch(() => {
-        this.$router.push("/login");
-      });
-    },
     methods: {
       handleAdd(node) {
-        console.log(node);
         if (node.parentId !== 0) {
-          this.$http({
-            method: 'post',
-            url: '/item/category',
-            data: this.$qs.stringify(node)
-          }).then(() => {
-            console.log("刷新");
-            this.reloadData(node.id);
-          }).catch();
+          this.verify().then(() => {
+            this.$http({
+              method: 'post',
+              url: '/item/category',
+              data: this.$qs.stringify(node)
+            }).then(() => {
+              this.reloadData(node.id);
+            }).catch();
+          }).catch(() => {
+            this.$router.push("/login");
+          });
         }else {
           this.$message.error("刷新后重试！");
         }
@@ -50,26 +45,33 @@
           id:id,
           name:name
         };
-        this.$http({
-          method: 'put',
-          url: '/item/category',
-          data: this.$qs.stringify(node)
-        }).then(() => {
-          this.$message.info("修改成功！");
+        this.verify().then(() => {
+          this.$http({
+            method: 'put',
+            url: '/item/category',
+            data: this.$qs.stringify(node)
+          }).then(() => {
+            this.$message.info("修改成功！");
+          }).catch(() => {
+            this.$message.info("修改失败！");
+          });
         }).catch(() => {
-          this.$message.info("修改失败！");
+          this.$router.push("/login");
         });
       },
       handleDelete(id) {
-        //console.log("delete ... " + id);
-        this.$http.delete("/item/category/cid/" + id).then(() => {
-          this.$message.info("删除成功！");
+        this.verify().then(() => {
+          this.$http.delete("/item/category/cid/" + id).then(() => {
+            this.$message.info("删除成功！");
+          }).catch(() => {
+            this.$message.info("删除失败！");
+          })
         }).catch(() => {
-          this.$message.info("删除失败！");
-        })
+          this.$router.push("/login");
+        });
       },
       handleClick(node) {
-        console.log(node)
+        //console.log(node)
       },
       reloadData(id){
         //操作完成后刷新数据

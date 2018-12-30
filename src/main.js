@@ -16,7 +16,11 @@ Vue.use(Vuetify, { theme: config.theme})
 Vue.use(MyComponent)
 Vue.prototype.$qs = qs;
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+Vue.prototype.verify = function () {
+  return this.$http.get("/auth/verify")
+};
 
 /* eslint-disable no-new */
 new Vue({

@@ -71,26 +71,27 @@
                  */
                 const {categories, ... rest}=this.brand;
                 rest.categories=categories.map(c => c.id).join(",");
-                //console.log(rest)
-                // if(this.isEdit) {
-                //   this.$http.delete("/item/brand/cid_bid/" + this.oldBrand.id).then().catch();
-                // }
-                this.$http({
-                  method:this.isEdit ? 'put' :'post',
-                  url:"/item/brand",
-                  data:this.$qs.stringify(rest),
-                }).then(
-                  () =>{
-                    //关闭对话框
-                    this.$emit('reload');
-                    this.$message.success("保存成功！");
-                    this.clear();
-                  }
-                ).catch(
-                  ()=>{
-                    this.$message.success("保存失败！");
-                  }
-                );
+
+                this.verify().then(() => {
+                  this.$http({
+                    method:this.isEdit ? 'put' :'post',
+                    url:"/item/brand",
+                    data:this.$qs.stringify(rest),
+                  }).then(
+                    () =>{
+                      //关闭对话框
+                      this.$emit('reload');
+                      this.$message.success("保存成功！");
+                      this.clear();
+                    }
+                  ).catch(
+                    ()=>{
+                      this.$message.success("保存失败！");
+                    }
+                  );
+                }).catch(() => {
+                  this.$router.push("/login");
+                });
               }
           },
         clear(){

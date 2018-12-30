@@ -137,7 +137,7 @@
         }
       },
       created(){
-        this.$http.get("/auth/verify").then(() => {
+        this.verify().then(() => {
           this.getDataFromServer();
         }).catch(() => {
           this.$router.push("/login");
@@ -172,7 +172,6 @@
               saleable:this.filter.saleable ===0 ? true: this.filter.saleable//上下架
             }
           }).then(resp =>{
-            console.log(resp.data.items)
             this.goodsList=resp.data.items;
             this.totalGoods = resp.data.total;
             //关闭进度条
@@ -195,16 +194,20 @@
           });
 
           if (deleteGoodsId.length > 0){
-            this.$message.confirm("全部删除，不可恢复！").then(() => {
-              this.$http.delete("/item/goods/spu/"+deleteGoodsId.join("-")).then(() => {
-                this.getDataFromServer();
-                this.selected = [];
+            this.verify().then(() => {
+              this.$message.confirm("全部删除，不可恢复！").then(() => {
+                this.$http.delete("/item/goods/spu/"+deleteGoodsId.join("-")).then(() => {
+                  this.getDataFromServer();
+                  this.selected = [];
+                }).catch(() => {
+                  this.$message.error("删除失败！");
+                })
               }).catch(() => {
-                this.$message.error("删除失败！");
+                this.$message.info("删除取消！");
               })
             }).catch(() => {
-              this.$message.info("删除取消！");
-            })
+              this.$router.push("/login");
+            });
           }else {
             this.$message.info("选中后再进行操作！");
           }
@@ -232,15 +235,19 @@
             return s.id;
           });
           if (selectId.length === 1 && selectId[0] === id) {
-            this.$message.confirm("删除后，不可恢复！").then(() => {
-              this.$http.delete("/item/goods/spu/"+id).then(() => {
-                this.getDataFromServer();
-                this.selected = [];
+            this.verify().then(() => {
+              this.$message.confirm("删除后，不可恢复！").then(() => {
+                this.$http.delete("/item/goods/spu/"+id).then(() => {
+                  this.getDataFromServer();
+                  this.selected = [];
+                }).catch(() => {
+                  this.$message.error("删除失败！");
+                })
               }).catch(() => {
-                this.$message.error("删除失败！");
-              })
+                this.$message.info("删除取消！");
+              });
             }).catch(() => {
-              this.$message.info("删除取消！");
+              this.$router.push("/login");
             });
           }else {
             this.$message.info("选中后再进行操作！");
@@ -251,12 +258,16 @@
             return s.id;
           });
           if (selectId.length === 1 && selectId[0] === id) {
-            this.$http.put("/item/goods/spu/out/" + id).then(() => {
-              this.$message.success("操作成功！");
-              this.getDataFromServer();
-              this.selected = [];
+            this.verify().then(() => {
+              this.$http.put("/item/goods/spu/out/" + id).then(() => {
+                this.$message.success("操作成功！");
+                this.getDataFromServer();
+                this.selected = [];
+              }).catch(() => {
+                this.$message.error("操作失败！");
+              });
             }).catch(() => {
-              this.$message.error("操作失败！");
+              this.$router.push("/login");
             });
           }else {
             this.$message.info("选中后再进行操作！");
@@ -274,7 +285,6 @@
           this.oldGoods.categories = categories;
 
           this.$http.get("/item/goods/spu/"+oldGoods.id).then(({data}) => {
-            console.log(data);
             this.isEdit = true;
             this.oldGoods.skusList = data.skus;
             this.oldGoods.spuDetail = data.spuDetail;
@@ -292,16 +302,20 @@
           });
 
           if (Ids.length > 0){
-            this.$message.confirm(this.filter.saleable?"全部下架,，不可恢复！":"全部上架,，不可恢复！").then(() => {
-              this.$http.put("/item/goods/spu/out/"+Ids.join("-")).then(() => {
-                this.getDataFromServer();
-                this.selected = [];
+            this.verify().then(() => {
+              this.$message.confirm(this.filter.saleable?"全部下架,，不可恢复！":"全部上架,，不可恢复！").then(() => {
+                this.$http.put("/item/goods/spu/out/"+Ids.join("-")).then(() => {
+                  this.getDataFromServer();
+                  this.selected = [];
+                }).catch(() => {
+                  this.$message.error(this.filter.saleable?"下架失败！":"上架失败！");
+                })
               }).catch(() => {
-                this.$message.error(this.filter.saleable?"下架失败！":"上架失败！");
+                this.$message.info(this.filter.saleable?"下架取消！":"上架取消！");
               })
             }).catch(() => {
-              this.$message.info(this.filter.saleable?"下架取消！":"上架取消！");
-            })
+              this.$router.push("/login");
+            });
           }else {
             this.$message.info("选中后再进行操作！");
           }
