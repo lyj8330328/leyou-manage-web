@@ -17,7 +17,7 @@
               <img src="../assets/avatar.jpg">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title>越南鳄</v-list-tile-title>
+              <v-list-tile-title>{{ username }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
@@ -110,7 +110,8 @@
         drawer: true,// 左侧导航是否隐藏
         miniVariant: false,// 左侧导航是否收起
         title: '乐优商城后台管理',// 顶部导航条名称,
-        menuMap:{}
+        menuMap:{},
+        username:'', //管理员信息
       }
     },
     computed: {
@@ -136,7 +137,12 @@
         m.items.forEach(i => {
           this.menuMap[p1][i.path.slice(1)] = i.title;
         })
-      })
+      });
+      this.verify().then((resp) => {
+        this.username = resp.data.username;
+      }).catch(() => {
+        this.$router.push("/login");
+      });
     }
   }
 </script>

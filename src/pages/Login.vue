@@ -52,7 +52,6 @@
       }
     },
     beforeRouteEnter(to,from,next){
-
       next(vm => {
         vm._data.backPath = from.path;
       });
