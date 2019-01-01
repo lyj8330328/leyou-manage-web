@@ -77,7 +77,9 @@
             }
 
           }
-        }).catch();
+        }).catch(() => {
+          this.$message.error("账号或者密码错误！");
+        });
       }
     }
   };

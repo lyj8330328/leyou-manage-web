@@ -5,7 +5,7 @@
       <v-btn color="error" @click="deleteAllGoods">全部删除</v-btn>
       <v-btn color="secondary" @click="soldOutPutAll" v-if="filter.saleable === false">全部上架</v-btn>
       <v-btn color="secondary" @click="soldOutPutAll" v-else>全部下架</v-btn>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-flex xs3>
         状态：
         <v-btn-toggle v-model="filter.saleable">
@@ -52,6 +52,7 @@
           </v-btn>
           <v-btn icon small v-if="props.item.saleable" @click="soldOutPut(props.item.id)">下架</v-btn>
           <v-btn icon small v-else @click="soldOutPut(props.item.id)">上架</v-btn>
+          <v-btn icon small @click="addSeckill(props.item)">秒杀</v-btn>
         </td>
       </template>
       <template slot="no-data">
@@ -89,12 +90,29 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!--添加秒杀商品-->
+    <v-dialog v-model="seckill_show" scrollable persistent max-width="1000px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">商品秒杀</span>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="seckill_close">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="px-5">
+          <my-seckill-form @seckill_close="seckill_close" :seckill_goods_message="seckill_goods_message"></my-seckill-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
   // 导入自定义的表单组件
     import MyGoodsForm from './MyGoodsForm'
+    import MySeckillForm from './MySeckillForm'
 
     export default {
       name: "MyGoods",
@@ -111,7 +129,9 @@
               {text: '操作', align: 'center', sortable: false}
             ],
             show: false, //控制对话框的显示
+            seckill_show:false, //秒杀对话框显示
             oldGoods : {}, //即将编辑的商品信息
+            seckill_goods_message:{}, //秒杀商品信息
             isEdit : false, //是否被编辑
             selected:[], //选择的条目
             pagination:{}, //分页信息
@@ -144,6 +164,10 @@
         });
       },
       methods:{
+        seckill_close(){
+          this.seckill_show = false;
+          this.seckill_goods_message = {}
+        },
         close(){
           this.show = false;
           //重新获取数据
@@ -296,7 +320,6 @@
           }).catch();
         },
         soldOutPutAll(){
-
           const Ids = this.selected.map(s => {
             return s.id;
           });
@@ -319,10 +342,27 @@
           }else {
             this.$message.info("选中后再进行操作！");
           }
-        }
+        },
+        addSeckill(goods){
+          const selectId = this.selected.map( s => {
+            return s.id;
+          });
+          if (selectId.length === 1 && selectId[0] === goods.id) {
+            let temp = {};
+            temp.goodsId = goods.id;
+            temp.goodsTitle = goods.title;
+            temp.goodsCname = goods.cname;
+            temp.goodsBname = goods.bname;
+            this.seckill_goods_message = temp;
+            this.seckill_show = true;
+          }else {
+            this.$message.info("选中后再进行操作！");
+          }
+        },
       },
       components:{
-        MyGoodsForm
+        MyGoodsForm,
+        MySeckillForm
       }
     }
 </script>
