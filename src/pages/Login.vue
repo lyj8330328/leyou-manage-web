@@ -69,7 +69,6 @@
         this.$http.post("/auth/accredit", this.$qs.stringify(form)).then(resp =>{
           if (resp.status === 200){
              //页面跳转
-
             if (this.backPath === "/"){
               this.$router.push("/index/dashboard");
             } else {
